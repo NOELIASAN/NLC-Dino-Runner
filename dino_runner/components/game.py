@@ -3,7 +3,7 @@ import pygame
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacleManager import ObstacleManager
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, FONT, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 
 
 class Game:
@@ -20,14 +20,27 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
 
+        self.points = 0
+        self.death_count = 0
+
+    def execute(self):
+        self.running = True
+        while self.running:
+            if not self.playing:
+                self.show_menu()
+                 
+
+        pygame.quit()
+
     def run(self):
         # Game loop: events - update - draw
+        self.obstacle_manager.reset_obstacles()
         self.playing = True
         while self.playing:
             self.events()
             self.update()
             self.draw()
-        pygame.quit()
+        
 
     def events(self):
         for event in pygame.event.get():
@@ -56,3 +69,17 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
+
+    def show_menu(self):
+        self.screen.fill((255, 255, 255))
+        half_screen_height = SCREEN_HEIGHT //2
+        half_screen_width = SCREEN_WIDTH //2
+
+        if  self.death_count == 0:
+            font = pygame.font.Font(FONT, 30)
+            text = font.render("Press any key to start", True, (0, 0, 0))
+            text_rect = text.get_rect()
+            text_rect.center = (half_screen_width, half_screen_height)
+            self.screen.blit(text, text_rect)
+
+            
