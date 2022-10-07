@@ -3,7 +3,7 @@ import pygame
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacleManager import ObstacleManager
 
-from dino_runner.utils.constants import BG, FONT, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, FONT, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 
 
 class Game:
@@ -16,6 +16,7 @@ class Game:
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.playing = False
+        self.running = False
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
@@ -29,7 +30,7 @@ class Game:
             if not self.playing:
                 self.show_menu()
                  
-
+        pygame.display.quit()
         pygame.quit()
 
     def run(self):
@@ -48,14 +49,28 @@ class Game:
                 self.playing = False
 
     def update(self):
+        self.update_score()
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
+
+    def update_score(self):
+        self.points += 1
+        if self.points % 100 == 0:
+            self.game_speed += 5
+
+    def draw_score(self):
+        font = pygame.font.Font(FONT, 30)
+        text = font.render(f"Points: {self.points}", True, (0, 0, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (100, 50)
+        self.screen.blit(text, text_rect)   
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
+        self.draw_score()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         pygame.display.update()
@@ -70,6 +85,15 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
 
+    def handle_key_events_on_menu(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.playing == False
+                self.running == False
+
+            if event.type == pygame.KEYDOWN:
+                self.run()
+
     def show_menu(self):
         self.screen.fill((255, 255, 255))
         half_screen_height = SCREEN_HEIGHT //2
@@ -81,5 +105,11 @@ class Game:
             text_rect = text.get_rect()
             text_rect.center = (half_screen_width, half_screen_height)
             self.screen.blit(text, text_rect)
+        elif self.death_count > 0 :
+            pass
+
+        self.screen.blit(RUNNING[0], (half_screen_width - 20, half_screen_height - 140))
+        pygame.display.update()
+        self.handle_key_events_on_menu()
 
             
