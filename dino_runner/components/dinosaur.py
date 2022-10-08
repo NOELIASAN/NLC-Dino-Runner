@@ -1,7 +1,7 @@
 import pygame
 
 #from sre_constants import JUMP
-from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, JUMPING, RUNNING, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD, SHIELD_TYPE
+from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, FONT, JUMPING, RUNNING, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING_SHIELD, SHIELD_TYPE
 from pygame.sprite import Sprite
 
 DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD}
@@ -32,6 +32,8 @@ class Dinosaur(Sprite):
         self.shield = False
         self.show_text = False
         self.shield_time_up = 0
+        self.hammer = False
+        self.hammer_time_up = 0
 
     def events(self):
         if self.dino_run:
@@ -88,8 +90,34 @@ class Dinosaur(Sprite):
     def draw(self, screen : pygame.Surface):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
 
-    def check_invicibility(self):
-        pass
+    def check_invicibility(self,screen):
+        if self.shield == True:
+            time_to_show = round((self.shield_time_up - pygame.time.get_ticks()) / 100, 2)
+            if time_to_show >= 0 and self.show_text:
+                font = pygame.font.Font( FONT, 30)
+                text = font.render(f"Time SHIELD: {time_to_show}", True, (128, 0, 0)) #cafe 
+                text_rect = text.get_rect()
+                text_rect.center = (550, 50)
+                screen.blit(text, text_rect) 
+        
+        elif self.hammer == True:
+            time_to_show = round((self.hammer_time_up - pygame.time.get_ticks()) / 100, 2)
+            if time_to_show >= 0 and self.show_text:
+                font = pygame.font.Font( FONT, 30)
+                text = font.render(f"Time HAMMER: {time_to_show}", True, (128, 0, 0)) #cafe 
+                text_rect = text.get_rect()
+                text_rect.center = (550, 50)
+                screen.blit(text, text_rect) 
+
+                #ostrar este tiempo en el juego 
+                
+
+        else:
+            self.shield = False
+            self.hammer = False
+            self.type = DEFAULT_TYPE
+                
+
 
 
 

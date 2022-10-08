@@ -1,3 +1,5 @@
+import random
+
 from ctypes.wintypes import SC_HANDLE
 from pygame.sprite import Sprite
 
@@ -18,3 +20,10 @@ class Obstacle(Sprite):
 
     def draw(self, screen):
         screen.blit(self.image[self.type], self.rect)
+
+    def when_hammer_colliderect_obstacle(self, player):
+        self.hammer = True
+        for power_up in self.power_ups:
+            if player.dino_rect.colliderect(self.hammer):
+                #self.power_ups.remove(power_up)
+                pass
