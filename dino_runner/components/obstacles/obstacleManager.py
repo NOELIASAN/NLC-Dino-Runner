@@ -12,16 +12,20 @@ class  ObstacleManager:
         if len(self.obstacles) == 0 :
             small_cactus = Cactus(SMALL_CACTUS)
             self.obstacles.append(small_cactus)
-            if len(self.obstacles) == 1:
-                large_cactus = Cactus(LARGE_CACTUS)
-                self.obstacles.append(large_cactus)
+            #if len(self.obstacles) == 1:
+                #large_cactus = Cactus(LARGE_CACTUS)
+                #self.obstacles.append(large_cactus)
 
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
-                pygame.time.delay(500)
-                game.playing = False
-                break
+                if not game.player.shield:
+                    pygame.time.delay(500)
+                    game.playing = False
+                    game.death_count +=1
+                else:
+                    self.obstacles.remove(obstacle)
+            break
 
 
     def draw(self, screen):
